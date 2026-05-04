@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="page-shell">
+    <header class="page-header">
+        <div class="brand">
+            <strong>Student Management</strong>
+            <span>Attendance & student tracking</span>
+        </div>
+        <nav class="site-nav">
+            <a href="/">Dashboard</a>
+            <a href="/add-student">Add Student</a>
+            <a href="/attendance">Mark Attendance</a>
+            <a href="/view-attendance">View Attendance</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="page-footer">
+        <span>© 2026 Student Management</span>
+    </footer>
+</div>
+</body>
+</html>
