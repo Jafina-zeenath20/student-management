@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="section-heading">
+    <div>
+        <h2>Student Dashboard</h2>
+        <p>Review current student enrollment and attendance controls.</p>
+    </div>
+    <div class="summary-card">Total students: <strong>{{ students|length }}</strong></div>
+</section>
+
+{% if request.query_params.get('success') %}
+<div class="alert alert-success">✓ {{ request.query_params.get('success') }}</div>
+{% endif %}
+
+<div class="filter-section">
+    <form method="get" class="filter-grid">
+        <input type="text" name="search" placeholder="Search by name or phone..." value="{{ search or '' }}">
+        
+        <select name="centre_id">
+            <option value="">All Centres</option>
+            {% for c in centres %}
+            <option value="{{ c.id }}" {% if centre_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="staff_id">
+            <option value="">All Staff</option>
+            {% for s in staff_list %}
+            <option value="{{ s.id }}" {% if staff_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <input type="text" name="grade" placeholder="Filter by grade..." value="{{ grade or '' }}">
+        
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="/" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<div class="table-card">
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Centre</th>
+                <th>Staff</th>
+                <th>Attendance %</th>
+                <th>Records</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            {% set stats = attendance_stats.get(s.id, {}) %}
+            <tr {% if stats.get('low_attendance') %}class="low-attendance"{% endif %}>
+                <td>{{ s.name }}</td>
+                <td>{{ s.grade }}</td>
+                <td>{{ s.centre.name if s.centre else '—' }}</td>
+                <td>{{ s.staff.name if s.staff else '—' }}</td>
+                <td>
+                    <strong>{{ stats.get('percentage', 0)|default('—', true) }}%</strong>
+                    {% if stats.get('low_attendance') %}<span style="color: #c53030;">⚠</span>{% endif %}
+                </td>
+                <td>{{ stats.get('present', 0) }}/{{ stats.get('total', 0) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
