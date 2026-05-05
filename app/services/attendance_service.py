@@ -30,7 +30,8 @@ def mark_attendance(db: Session, student_id: int, status: str, attendance_date: 
 # ✅ Get attendance by date
 def get_by_date(db: Session, selected_date):
     return db.query(Attendance).options(
-        joinedload(Attendance.student)
+        joinedload(Attendance.student).joinedload(Student.centre),
+        joinedload(Attendance.student).joinedload(Student.staff)
     ).filter(Attendance.date == selected_date).all()
 
 

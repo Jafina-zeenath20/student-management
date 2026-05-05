@@ -1,5 +1,4 @@
 import hashlib
-import secrets
 from sqlalchemy.orm import Session
 from app.models.models import User
 

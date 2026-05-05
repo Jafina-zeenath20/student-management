@@ -22,6 +22,8 @@
         <thead>
             <tr>
                 <th>Student</th>
+                <th>Centre</th>
+                <th>Staff</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -30,6 +32,8 @@
             {% for r in records %}
             <tr>
                 <td>{{ r.student.name if r.student else r.student_id }}</td>
+                <td>{{ r.student.centre.name if r.student.centre else '—' }}</td>
+                <td>{{ r.student.staff.name if r.student.staff else '—' }}</td>
                 <td>{{ r.status }}</td>
                 <td>
                     <a href="/edit-attendance/{{ r.student_id }}/{{ selected_date }}" class="btn btn-secondary" style="padding: 8px 12px; font-size: 0.9rem;">Edit</a>
@@ -37,7 +41,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="3" class="empty-state">No attendance records found for this date.</td>
+                <td colspan="5" class="empty-state">No attendance records found for this date.</td>
             </tr>
             {% endfor %}
         </tbody>

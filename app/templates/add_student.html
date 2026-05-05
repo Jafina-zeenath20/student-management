@@ -48,7 +48,7 @@
 </div>
 
 <script>
-const selectedStaff = {{ selected_staff if selected_staff is not none else 'null' }};
+const selectedStaff = {{ selected_staff | tojson }};
 
 async function loadStaff() {
     const centre = document.getElementById("centre").value;

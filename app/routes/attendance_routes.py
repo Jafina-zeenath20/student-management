@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from datetime import date
 from app.models.database import SessionLocal
 from app.models.models import Student, Attendance
-from app.services.attendance_service import mark_attendance, get_by_date, get_by_student
+from app.services.attendance_service import mark_attendance, get_by_date
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
