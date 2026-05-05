@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="section-heading">
+    <div>
+        <h2>📊 Test Marks & Rankings</h2>
+        <p>Track student performance and generate rankings</p>
+    </div>
+</section>
+
+{% if request.query_params.get('success') %}
+<div class="alert alert-success">✓ {{ request.query_params.get('success') }}</div>
+{% endif %}
+
+{% if request.query_params.get('error') %}
+<div class="alert alert-error">✗ {{ request.query_params.get('error') }}</div>
+{% endif %}
+
+<div class="form-card">
+    <h3>Add New Mark</h3>
+    <form method="post" action="/marks/add" class="form-grid">
+        <label>
+            Student
+            <select name="student_id" required>
+                <option value="">Select a student</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.name }} (Grade {{ student.grade }})</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Subject
+            <input type="text" name="subject" placeholder="e.g., Mathematics, English" required>
+        </label>
+
+        <label>
+            Marks Obtained
+            <input type="number" name="marks" step="0.01" placeholder="Enter marks" required>
+        </label>
+
+        <label>
+            Total Marks
+            <input type="number" name="total_marks" step="0.01" value="100" placeholder="Total marks" required>
+        </label>
+
+        <label>
+            Test Date
+            <input type="date" name="test_date" required>
+        </label>
+
+        <button type="submit" class="btn btn-primary">Add Mark</button>
+    </form>
+</div>
+
+<div class="filter-section">
+    <form method="get" class="filter-grid">
+        <select name="student_id">
+            <option value="">All Students</option>
+            {% for student in students %}
+            <option value="{{ student.id }}" {% if student_id == student.id %}selected{% endif %}>{{ student.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="text" name="subject" placeholder="Filter by subject..." value="{{ subject or '' }}">
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="/marks" class="btn btn-secondary">Clear</a>
+    </form>
+</div>
+
+<!-- STUDENT RANKINGS -->
+<div class="table-card">
+    <h3>📈 Student Rankings (by Average Marks)</h3>
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Student Name</th>
+                <th>Average %</th>
+                <th>Performance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ranking in rankings %}
+            <tr>
+                <td><strong>{{ ranking.rank }}</strong></td>
+                <td>{{ ranking.name }}</td>
+                <td><strong>{{ ranking.average }}%</strong></td>
+                <td>
+                    <span class="performance-badge {% if ranking.average >= 80 %}performance-excellent{% elif ranking.average >= 60 %}performance-good{% else %}performance-fair{% endif %}">
+                        {% if ranking.average >= 80 %}Excellent⭐
+                        {% elif ranking.average >= 70 %}Good✓
+                        {% elif ranking.average >= 60 %}Average
+                        {% else %}Needs Improvement
+                        {% endif %}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="empty-state">No students with marks yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- MARKS TABLE -->
+<div class="table-card">
+    <h3>📋 All Marks</h3>
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Marks</th>
+                <th>Percentage</th>
+                <th>Test Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in marks %}
+            <tr>
+                <td>{{ mark.student.name if mark.student else '—' }}</td>
+                <td>{{ mark.subject }}</td>
+                <td>{{ mark.marks }} / {{ mark.total_marks }}</td>
+                <td>
+                    {% set percentage = (mark.marks / mark.total_marks * 100) | round(2) %}
+                    <strong>{{ percentage }}%</strong>
+                    <span class="score-badge {% if percentage >= 80 %}score-high{% elif percentage >= 60 %}score-medium{% else %}score-low{% endif %}">
+                        {% if percentage >= 80 %}⭐{% elif percentage >= 60 %}✓{% else %}⚠{% endif %}
+                    </span>
+                </td>
+                <td>{{ mark.test_date.strftime("%Y-%m-%d") }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="empty-state">No marks found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .performance-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .performance-excellent {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .performance-good {
+        background: #bee3f8;
+        color: #2c5282;
+    }
+    
+    .performance-fair {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .score-badge {
+        margin-left: 5px;
+        font-size: 1.2rem;
+    }
+    
+    .score-high {
+        color: green;
+    }
+    
+    .score-medium {
+        color: orange;
+    }
+    
+    .score-low {
+        color: red;
+    }
+</style>
+
+{% endblock %}

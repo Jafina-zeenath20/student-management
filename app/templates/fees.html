@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="section-heading">
+    <div>
+        <h2>💰 Fee Management</h2>
+        <p>Track and manage student fees</p>
+    </div>
+</section>
+
+{% if request.query_params.get('success') %}
+<div class="alert alert-success">✓ {{ request.query_params.get('success') }}</div>
+{% endif %}
+
+{% if request.query_params.get('error') %}
+<div class="alert alert-error">✗ {{ request.query_params.get('error') }}</div>
+{% endif %}
+
+<div class="form-card">
+    <h3>Add New Fee</h3>
+    <form method="post" action="/fees/add" class="form-grid">
+        <label>
+            Student
+            <select name="student_id" required>
+                <option value="">Select a student</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.name }} ({{ student.grade }})</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            Amount
+            <input type="number" name="amount" step="0.01" placeholder="Enter fee amount" required>
+        </label>
+
+        <label>
+            Month
+            <input type="text" name="month" placeholder="e.g., January 2026" required>
+        </label>
+
+        <button type="submit" class="btn btn-primary">Add Fee</button>
+    </form>
+</div>
+
+<div class="filter-section">
+    <form method="get" class="filter-grid">
+        <select name="student_id">
+            <option value="">All Students</option>
+            {% for student in students %}
+            <option value="{{ student.id }}" {% if student_id == student.id %}selected{% endif %}>{{ student.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="status">
+            <option value="">All Status</option>
+            <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="Paid" {% if status == 'Paid' %}selected{% endif %}>Paid</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="/fees" class="btn btn-secondary">Clear</a>
+        <a href="/export/fees" class="btn btn-secondary">📥 Export CSV</a>
+    </form>
+</div>
+
+<div class="table-card">
+    <table class="responsive-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Month</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Paid Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fee in fees %}
+            <tr>
+                <td>{{ fee.student.name if fee.student else '—' }}</td>
+                <td>{{ fee.month }}</td>
+                <td>₹ {{ fee.amount }}</td>
+                <td>
+                    <span class="badge {% if fee.status == 'Paid' %}badge-success{% else %}badge-warning{% endif %}">
+                        {{ fee.status }}
+                    </span>
+                </td>
+                <td>{{ fee.paid_date.strftime("%Y-%m-%d") if fee.paid_date else "—" }}</td>
+                <td>
+                    {% if fee.status == 'Pending' %}
+                    <form method="post" action="/fees/{{ fee.id }}/mark-paid" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;">Mark Paid</button>
+                    </form>
+                    {% else %}
+                    <span style="color: green;">✓ Paid</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="empty-state">No fees found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .badge-warning {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+</style>
+
+{% endblock %}

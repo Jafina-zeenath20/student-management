@@ -264,6 +264,64 @@ select:focus {
     margin-top: 20px;
 }
 
+/* User Section Styling */
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.btn-logout {
+    background: #fee;
+    color: var(--danger);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-logout:hover {
+    background: var(--danger);
+    color: #fff;
+}
+
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pagination a {
+    margin: 0 5px;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-warning {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
 @media (max-width: 720px) {
     .page-header,
     .section-heading {
@@ -274,6 +332,11 @@ select:focus {
     .site-nav {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .user-section {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .form-actions {

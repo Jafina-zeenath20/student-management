@@ -18,7 +18,15 @@
             <a href="/add-student">Add Student</a>
             <a href="/attendance">Mark Attendance</a>
             <a href="/view-attendance">View Attendance</a>
+            {% if request.session.get('role') == 'admin' %}
+            <a href="/fees">Fee Management</a>
+            <a href="/marks">Marks</a>
+            {% endif %}
         </nav>
+        <div class="user-section">
+            <span>👤 {{ request.session.get('username', 'User') }} ({{ request.session.get('role', '').title() }})</span>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
     </header>
 
     <main class="page-content">
